@@ -36,11 +36,6 @@ public class Problem1new {
             dp[0][i] = dp[0][i-1]-2;
         }
 
-        //  idx/move = 0 -> topleft (either a match or a mismatch)
-        //  idx/move = 1 -> left (gap for sequenceB, extension for sequenceA)
-        //  idx/move = 2 -> top  (gap for sequenceA, extension for sequenceB)
-        int[] dx = {-1, -1, 0}; int[] dy = {-1, 0, -1};
-
         // If sequenceA[i-1] == sequenceB[j-1], inherit dp[i-1][j-1]+2 for a match
         // dp[i-1][j-1]-1 for mismatch
         // dp[i-1][j]-2 for removing a char from sequenceA/extending a char for sequenceB
@@ -48,47 +43,63 @@ public class Problem1new {
         for (int y=1; y<=sequenceB.length(); y++) {
             for (int x=1; x<=sequenceA.length(); x++) {
                 char charA = sequenceA.charAt(x-1), charB = sequenceB.charAt(y-1);
-                int match = dp[y-1][x-1]+2, mismatch = dp[y-1][x-1]-1;
-                int extendLeft = dp[y][x-1]-2, extendTop = dp[y-1][x]-2;
+                int match = dp[y-1][x-1]+matchingScore, mismatch = dp[y-1][x-1]+mismatchingScore;
+                int extendLeft = dp[y][x-1]+gapScore, extendTop = dp[y-1][x]+gapScore;
                 dp[y][x] = Math.max(extendLeft, extendTop);
                 dp[y][x] = charA == charB?Math.max(dp[y][x], match):Math.max(dp[y][x], mismatch);
             }
         }
 
+        StringBuilder sbA = new StringBuilder(), sbB = new StringBuilder();
+        int x=dp[0].length-1, y=dp.length-1;
+        while  (x >0 && y > 0) {
+            char charA = '_', charB = '.';
+            if (x < sequenceA.length()) charA = sequenceA.charAt(x);
+            if (y < sequenceB.length()) charB = sequenceB.charAt(y);
+            int match = getNext(x + 1, y + 1, dp),
+                    mismatch = getNext(x + 1, y + 1, dp),
+                    extendA = getNext(x + 1, y, dp), extendB = getNext(x, y + 1, dp);
+            int move = getMove(match, mismatch, extendA, extendB);
+            if (move == 0) {
+                sbA.append(charA); sbB.append(charB); x++; y++;
+            } else if (move == 1) {
+                sbA.append(charA + 32); sbB.append(charB + 32); x++; y++;
+            } else if (move == 2) {
+                sbA.append(charA); sbB.append("-"); x++;
+            } else if (move == 3) {
+                sbA.append("-"); sbB.append(charB); y++;
+            }
+        }
+
         printDPMatrix(sequenceA, sequenceB, dp);
+        System.out.print("SequenceA: "); System.out.println(sbA.reverse().toString());
+        System.out.print("SequenceB: "); System.out.println(sbB.reverse().toString());
 
-        StringBuilder sbA = new StringBuilder();
-        StringBuilder sbB = new StringBuilder();
-
-        return -1;
+        return dp[sequenceB.length()][sequenceA.length()];
     }
 
-    // for dp[y-1][x-1], pick the largest one to move
-    // Highest priority for match/mismatch -> dp[y-1][x-1]
-    public static int getMove(int x, int y, int[][] dp) {
-        int top = Integer.MIN_VALUE, left = Integer.MIN_VALUE, topLeft = Integer.MIN_VALUE;
-        if (validRange(x-1, y-1, dp)) topLeft = dp[y-1][x-1]+2;
-        if (validRange(x-1, y, dp)) left = dp[y][x-1]-2;
-        if (validRange(x, y-1, dp)) top = dp[y-1][x]-2;
-        if (topLeft >= left && topLeft >= top) return 0;// match
-        if (topLeft-3 >= left && topLeft-3 >= top) return 0;// mismatch
-        if (left >= top) return 1;
-        return 2;
+    public static int getNext(int x, int y, int[][]dp) {
+        if (x<=0 || y<=0 || x>= dp[0].length || y >= dp.length) return Integer.MIN_VALUE;
+        return dp[y][x];
     }
 
-    // check our move is within the validRange
-    public static boolean validRange(int x, int y, int[][] dp) {
-        return x >= 0 && y >= 0 && x < dp[0].length && y < dp.length;
+
+    // return 0 for match, 1 for mismatch, 2 for extendA/gapB, 3 for extendB/gapA
+    public static int getMove(int match, int mismatch, int extendA, int extendB) {
+        if (match >= mismatch && match >= extendA && match >= extendB) return 0;
+        if (mismatch >= extendA && mismatch >= extendB) return 1;
+        if (extendA >= extendB) return 2;
+        return 3;
     }
 
     public static void printDPMatrix(String sequenceA, String sequenceB, int[][] dp) {
         // To print the dp matrix
         for (int i=0; i< sequenceA.length()+1; i++) {
             if (i == 0) {
-                System.out.print("''  ");
+                System.out.print("''    ");
             } else {
                 System.out.print(sequenceA.charAt(i-1));
-                System.out.print(" ");
+                System.out.print("   ");
             }
         }
         System.out.println();
@@ -101,6 +112,7 @@ public class Problem1new {
                 System.out.print(" ");
             }
             for (int j = 0; j < sequenceA.length()+1; j++) {
+
                 System.out.print(dp[i][j]);
                 System.out.print(" ");
             }
@@ -109,10 +121,10 @@ public class Problem1new {
     }
 
     public static void main(String[] args) {
-//        String sequenceA = "GCATTGC";
-//        String sequenceB = "GATTAGC";
-        String sequenceA = "AAAGAATTCA";
-        String sequenceB = "AAATCA";
+        String sequenceA = "GCATTGC";
+        String sequenceB = "GATTAGC";
+//        String sequenceA = "AAAGAATTCA";
+//        String sequenceB = "AAATCA";
         int score = alignmentScore(sequenceA,sequenceB, 2, -1, -2);
         System.out.print("Alignment score: "); System.out.println(score);
     }
