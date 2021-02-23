@@ -27,13 +27,13 @@ public class Problem1new {
         // First column, comparing empty string to sequence B
         // Calculate gaping score of B[0:i] from empty string
         for (int i=1; i<=sequenceB.length(); i++) {
-            dp[i][0] = dp[i-1][0]-2;
+            dp[i][0] = dp[i-1][0]+gapScore;
         }
 
         // First row, comparing empty string to sequence A
         // Calculate gaping score  of A[0:i] from empty string
         for (int i=1; i<=sequenceA.length(); i++) {
-            dp[0][i] = dp[0][i-1]-2;
+            dp[0][i] = dp[0][i-1]+gapScore;
         }
 
         // If sequenceA[i-1] == sequenceB[j-1], inherit dp[i-1][j-1]+2 for a match
@@ -52,23 +52,25 @@ public class Problem1new {
 
         StringBuilder sbA = new StringBuilder(), sbB = new StringBuilder();
         int x=dp[0].length-1, y=dp.length-1;
-        while  (x >0 && y > 0) {
+        while  (x >=0 || y >= 0) {
+            if (x == 0 && y == 0) break;
             char charA = '_', charB = '.';
-            if (x < sequenceA.length()) charA = sequenceA.charAt(x);
-            if (y < sequenceB.length()) charB = sequenceB.charAt(y);
-            int match = getNext(x + 1, y + 1, dp),
-                    mismatch = getNext(x + 1, y + 1, dp),
-                    extendA = getNext(x + 1, y, dp), extendB = getNext(x, y + 1, dp);
-            int move = getMove(match, mismatch, extendA, extendB);
-            if (move == 0) {
-                sbA.append(charA); sbB.append(charB); x++; y++;
-            } else if (move == 1) {
-                sbA.append(charA + 32); sbB.append(charB + 32); x++; y++;
-            } else if (move == 2) {
-                sbA.append(charA); sbB.append("-"); x++;
-            } else if (move == 3) {
-                sbA.append("-"); sbB.append(charB); y++;
-            }
+            if (x >=1 ) charA = sequenceA.charAt(x-1);
+            if (y >=1 ) charB = sequenceB.charAt(y-1);
+            int current = getNext(x, y, dp);
+            int topLeft = getNext(x-1, y-1, dp);
+            int left = getNext(x-1, y, dp);
+            int top = getNext(x,y-1, dp);
+            if (topLeft == current-matchingScore && charA == charB) {
+                sbA.append(charA); sbB.append(charB); x--; y--;
+            } else if (topLeft == current-mismatchingScore && charA != charB) {
+                charA += 32; charB += 32;
+                sbA.append(charA); sbB.append(charB); x--; y--;
+            } else if (top == current-gapScore) {
+                sbA.append("-"); sbB.append(charB); y--;
+            } else if (left == current-gapScore) {
+                sbA.append(charA); sbB.append("-"); x--;
+            } else break;
         }
 
         printDPMatrix(sequenceA, sequenceB, dp);
@@ -79,17 +81,8 @@ public class Problem1new {
     }
 
     public static int getNext(int x, int y, int[][]dp) {
-        if (x<=0 || y<=0 || x>= dp[0].length || y >= dp.length) return Integer.MIN_VALUE;
+        if (x<0 || y<0 || x>= dp[0].length || y >= dp.length) return Integer.MIN_VALUE;
         return dp[y][x];
-    }
-
-
-    // return 0 for match, 1 for mismatch, 2 for extendA/gapB, 3 for extendB/gapA
-    public static int getMove(int match, int mismatch, int extendA, int extendB) {
-        if (match >= mismatch && match >= extendA && match >= extendB) return 0;
-        if (mismatch >= extendA && mismatch >= extendB) return 1;
-        if (extendA >= extendB) return 2;
-        return 3;
     }
 
     public static void printDPMatrix(String sequenceA, String sequenceB, int[][] dp) {
@@ -99,17 +92,17 @@ public class Problem1new {
                 System.out.print("''    ");
             } else {
                 System.out.print(sequenceA.charAt(i-1));
-                System.out.print("   ");
+                System.out.print(" ");
             }
         }
         System.out.println();
         for (int i=0; i<sequenceB.length()+1; i++) {
             if (i == 0) {
-                System.out.print("  ");
+                System.out.print("    ");
             }
             else {
                 System.out.print(sequenceB.charAt(i - 1));
-                System.out.print(" ");
+                System.out.print("   ");
             }
             for (int j = 0; j < sequenceA.length()+1; j++) {
 
