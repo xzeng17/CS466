@@ -8,3 +8,12 @@ out
 .idea
 *.xml
 *.class
+
+
+
+
+# C++
+
+.objs
+main
+.vscode
