@@ -15,6 +15,6 @@ int main () {
     fl.readAll();
 
     Blosum b;
-    cout<<"Matching score is: "<<b.getScore('A', 'A')<<endl;
+    cout<<"Matching score is: "<<b.getScore('C', 'A')<<endl;
     return 0;
 }
