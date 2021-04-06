@@ -9,7 +9,7 @@ class Blosum {
         Blosum();
         Blosum(string filename);
 
-        int getScore(const char& seqA, const char& seqB);
+        int getScore(const char& aaA, const char& aaB);
 
     private:
         string filename_ = "assets/blosum.csv";

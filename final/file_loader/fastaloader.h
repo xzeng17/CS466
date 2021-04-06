@@ -10,6 +10,7 @@ using namespace std;
 class FastaLoader : public Fileloader {
     public:
         FastaLoader(string& filename);
+        
     private:
 
 

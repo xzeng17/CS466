@@ -49,7 +49,7 @@ int Blosum::getNumber(const string& line, unsigned& idx) {
     return stoi(number);
 }
 
-int Blosum::getScore(const char& seqA, const char& seqB) {
-    if (matrix_.find(seqA) == matrix_.end() || matrix_[seqA].find(seqB) == matrix_[seqA].end()) throw runtime_error("Error: Unknown input");
-    return matrix_[seqA][seqB];
+int Blosum::getScore(const char& aaA, const char& aaB) {
+    if (matrix_.find(aaA) == matrix_.end() || matrix_[aaA].find(aaB) == matrix_[aaA].end()) throw runtime_error("Error: Unknown input");
+    return matrix_[aaA][aaB];
 }

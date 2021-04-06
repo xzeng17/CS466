@@ -1,3 +1,5 @@
+#pragma once
+
 #include<string>
 #include <fstream>
 #include <istream>
@@ -8,7 +10,7 @@ using namespace std;
 class Fileloader {
     public:
         Fileloader();
-        Fileloader(string& filename);
+        Fileloader(const string& filename);
         virtual ~Fileloader();
         virtual string readLine();
         virtual void readAll();

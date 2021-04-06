@@ -8,7 +8,7 @@ using namespace std;
 
 
 // open a file from filename
-Fileloader::Fileloader(string& filename) {
+Fileloader::Fileloader(const string& filename) {
     filename_ = filename;
     load();
 }
