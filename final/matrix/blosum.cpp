@@ -54,6 +54,10 @@ int Blosum::getNumber(const string& line, unsigned& idx) {
 }
 
 int Blosum::getScore(const char& aaA, const char& aaB) {
-    if (matrix_.find(aaA) == matrix_.end() || matrix_[aaA].find(aaB) == matrix_[aaA].end()) throw runtime_error("Error: Unknown input");
+    if (!validInput(aaA) || !validInput(aaB)) throw runtime_error("Error: Unknown input");
     return matrix_[aaA][aaB];
+}
+
+bool Blosum::validInput(const char& aa) const {
+    return matrix_.find(aa) != matrix_.end();
 }

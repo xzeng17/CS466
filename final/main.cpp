@@ -18,7 +18,7 @@ int main () {
     string assets="assets/";
 
     Blosum b;
-    cout<<"Matching score is: "<<b.getScore('C', 'A')<<endl;
+    // cout<<"Matching score is: "<<b.getScore('J', 'A')<<endl;
 
     string sname = assets+"gfps.txt";    // fasta file, subjects
     Database db(sname);
@@ -27,7 +27,7 @@ int main () {
     Query q (qname);
     vector<SequenceMapping> sms = db.getDB();
     
-    sms[0].printMap();
+    //sms[0].printMap();
 
     Score score (&q, &sms[0], &b);
 

@@ -23,7 +23,7 @@ class SequenceMapping {
     private:
         int idx_ = 0;
         string title_;
-        map<string, vector<int>> map_;
+        map<string, vector<int> > map_;
 
         
 };

@@ -23,12 +23,12 @@ class Score {
         SequenceMapping* sm_;
         Blosum* b_;
         const unsigned seedNumber = 3;   //hard coded the limit of seeds
-        // const unsigned seedCut = 12; // hard coded the cutoff for being a seed
+        const unsigned seedCut_ = 10; // hard coded the cutoff for being a seed, fuzzy match
         const string& sequence_;
         
-        priority_queue<Pattern, vector<Pattern>, greater<Pattern>> pq;
-        vector<vector<int>> scores_;
-        map<int, set<int>> added_;      // {i: {j}}
+        priority_queue<Pattern, vector<Pattern>, greater<Pattern> > pq;
+        vector<vector<int> > scores_;
+        map<int, set<int> > added_;      // {i: {j}}
 
         void exactMatch();
         void buildSeeds();  // totally based on the blosum matching score

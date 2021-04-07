@@ -2,7 +2,7 @@
 #include <iostream>
 
 Score::Score(Query* q, SequenceMapping* sm, Blosum* b):q_(q), sm_(sm), b_(b), sequence_(q->sequence()) {
-    scores_ = vector<vector<int>>(q_->size(), vector<int>());
+    scores_ = vector<vector<int> >(q_->size(), vector<int>());
     exactMatch();
     buildSeeds();
 }
@@ -13,7 +13,7 @@ void Score::exactMatch() {
         string tripleAA = sequence_.substr(i, 3);
         if (sm_->contains(tripleAA)) {
             const vector<int>& positions = sm_->getPos(tripleAA);
-            for (int pos:positions) {
+            for (int pos : positions) {
                 scores_[i].push_back(pos);
             }
         }
@@ -72,7 +72,24 @@ int Score::binarySearch(const vector<int>&v, int t) {
 }
 
 void Score::fuzzyMatch(const string& input) {
-    // currently does not support fuzzyMatch, too much work
+    if (pq.size() == seedNumber) return;// return if seeds number already satisified
+    string varient;
+    for (unsigned i=0; i<input.size(); ++i) {
+        varient = input;
+        for (char c = 'A'; c <= 'Z'; c++) {
+            if (!b_->validInput(c)) continue;
+            varient[i] = c;
+            if (!sm_->contains(varient)) continue;
+            int fuzzyScore = tripleScore(input, varient);
+            if (fuzzyScore < (int)seedCut_) continue;
+            const vector<int>& positions = sm_->getPos(varient);
+            for (int pos : positions) {
+                scores_[i].push_back(pos);
+            }
+        }
+    }
+
+    buildSeeds();   // called again, can be improved later
 }
 
 int Score::tripleScore(const string& triQAA, const string& triSAA) {
