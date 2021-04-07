@@ -22,8 +22,12 @@ TEST_CASE("test_tripleDB", "[valgrind][weight=1]") {
     while (fl.hasNext()) {
         concSeq += fl.readLine();
     }
+
+    //db.printMap(title);
+
     for (unsigned i=0; i<concSeq.size()-2; i++) {
         string tripleAA = concSeq.substr(i, 3);
+            cout<<tripleAA<<endl;
         REQUIRE(db.contains(title, tripleAA));
     }
 }

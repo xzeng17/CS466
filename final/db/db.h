@@ -17,6 +17,7 @@ class Database {
         bool contains(const string& title, const string& aa);   // the permutation of amino acid tirplet
         unsigned size() const;
         
+        void printMap(const string& title);
         vector<SequenceMapping> getDB();   // for test purpose
     private:
         void init(Fileloader& fl);

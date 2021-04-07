@@ -32,13 +32,13 @@ void Database::init(Fileloader& fl) {
         string last = "";
         string sndlast = "";
         
-        while (line[0] != '>') {
+        while (line.size() > 0 && line[0] != '>') {
             string concatedLine = sndlast+last+line;
             //cout<<"showing line: "<<concatedLine<<endl;
-            sm.build(line);
+            sm.build(concatedLine);
             if (!fl.hasNext()) break;
-            last = line.substr(line.size()-2,1);
-            sndlast = line.substr(line.size()-1,1);
+            last = concatedLine.substr(concatedLine.size()-1,1);
+            sndlast = concatedLine.substr(concatedLine.size()-2,1);
             line.clear();
             while (line.size() == 0 && fl.hasNext()) line = fl.readLine();
         }
@@ -64,7 +64,11 @@ bool Database::contains(const string& title, const string& aa) {
 }
 
 
-// for testing purpose, exposing datasture through public API
+// for testing purpose, exposing data structure through public API
  vector<SequenceMapping> Database::getDB() {
      return db_;
+ }
+
+ void Database::printMap(const string& title) {
+     db_[titles_[title]].printMap();
  }
