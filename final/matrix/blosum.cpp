@@ -1,6 +1,5 @@
-#include<string>
-#include<vector>
-
+#include <vector>
+#include <iostream>
 #include "blosum.h"
 #include "../file_loader/fileloader.h"
 
@@ -18,8 +17,13 @@ Blosum::Blosum(string filename) {
 
 void Blosum::init() {
     Fileloader fl (filename_);
-
-    string line = fl.readLine();
+    string line;
+    try {
+        line = fl.readLine();
+    } catch (runtime_error e) {
+        std::cout<<"Failed to load Blosum input."<<std::endl;
+    }
+    
     vector<char> bar;
     for (char c : line) {
         if (isalpha(c)) {

@@ -14,7 +14,7 @@ CXX = clang++
 LD = clang++
 OBJS_DIR = .objs
 
-OBJS += file_loader/fileloader.o matrix/blosum.o db/db.o db/sequencemapping.o
+OBJS += file_loader/fileloader.o matrix/blosum.o db/db.o db/sequencemapping.o query/pattern.o query/query.o query/score.o
 
 # Add standard CS 225 object files
 # OBJS += cs225/HSLAPixel.o cs225/PNG.o cs225/lodepng/lodepng.o
@@ -53,6 +53,7 @@ $(OBJS_DIR):
 	@mkdir -p $(OBJS_DIR)/file_loader	
 	@mkdir -p $(OBJS_DIR)/matrix
 	@mkdir -p $(OBJS_DIR)/db
+	@mkdir -p $(OBJS_DIR)/query
 
 
 # Rules for compiling source code.
@@ -83,6 +84,7 @@ $(TEST): $(patsubst %.o, $(OBJS_DIR)/%.o, $(OBJS_TEST))
 -include $(OBJS_DIR)/file_loader/*.d
 -include $(OBJS_DIR)/matrix/*.d
 -include $(OBJS_DIR)/db/*.d
+-include $(OBJS_DIR)/query/*.d
 
 # Standard C++ Makefile rules:
 clean:

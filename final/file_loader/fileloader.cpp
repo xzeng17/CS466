@@ -9,6 +9,7 @@ using namespace std;
 
 // open a file from filename
 Fileloader::Fileloader(const string& filename) {
+    if (filename.size() < 3) throw runtime_error("Error: Unacceptalbe format.");
     filename_ = filename;
     load();
 }

@@ -13,10 +13,11 @@ using namespace std;
 class Database {
     public:
         Database(const string& filename);
-        bool contains(const string& tripleAA) const;
-        bool contains(const string& tripleAA, const string& aa);
+        bool contains(const string& title) const;   // fasta title of sequence name
+        bool contains(const string& title, const string& aa);   // the permutation of amino acid tirplet
         unsigned size() const;
-
+        
+        vector<SequenceMapping> getDB();   // for test purpose
     private:
         void init(Fileloader& fl);
         vector<SequenceMapping> db_;

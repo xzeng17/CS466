@@ -9,7 +9,7 @@
 
 using namespace std;
 
-// Test DB function, test if generated Triple AA has all permutation
+// Test DB function, test if generated Triple AA has all combinations
 TEST_CASE("test_tripleDB", "[valgrind][weight=1]") {
     string testname = "tests/test_data/fasta_tripleAA.txt";
 
