@@ -4,6 +4,7 @@
 #include "../db/sequencemapping.h"
 #include "../matrix/blosum.h"
 #include "pattern.h"
+#include "util.hpp"
 
 #include <string>
 #include <vector>
@@ -39,9 +40,9 @@ class Score {
         void popAll();
         void exactMatch();
         void buildSeeds();  // totally based on the blosum matching score
-        int binarySearch(const vector<int>&v, int t);
         void fuzzyMatch(const string& input);
         int tripleScore(const string& triQAA, const string& triSAA);    // Obtain three Amino acids matching score
+        void expend();
 
         bool add(int i, int j);
         bool added(int i);

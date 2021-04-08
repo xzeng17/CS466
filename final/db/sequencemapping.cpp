@@ -1,4 +1,5 @@
 #include "sequencemapping.h"
+#include "../query/util.hpp"
 #include <iostream>
 
 SequenceMapping::SequenceMapping(const string& title) {
@@ -50,4 +51,9 @@ void SequenceMapping::printArr(const vector<int>& arr) {
     for (unsigned i=0; i<arr.size(); i++) {
         cout<<arr[i]<<", ";
     }
+}
+
+string SequenceMapping::get(unsigned start, unsigned size) {
+    int arrIdx = Util::largestSmallerEqual(startIdx_, start);
+    return "";
 }

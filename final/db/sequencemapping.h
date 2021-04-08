@@ -19,6 +19,7 @@ class SequenceMapping {
         const string& title() const;
         void printMap();
         void printArr(const vector<int>& arr);
+        string get(unsigned start, unsigned size);
 
     private:
         int idx_ = 0;

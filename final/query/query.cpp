@@ -31,3 +31,15 @@ const string& Query::sequence() const {
 const string& Query::title() const {
     return title_;
 }
+
+
+string Query::get(unsigned start, unsigned size) {
+    string res;
+    if (start >= sequence_.size()) {
+        return res;
+    }
+    for (unsigned i=start; i<start+size || i<sequence_.size(); i++) {
+        res.push_back(sequence_[i]);
+    }
+    return res;
+}

@@ -42,7 +42,7 @@ void Score::buildSeeds() {
             unsigned successor = 1;
 
             while (i+successor < scores_.size()-2) {
-                int next = binarySearch(scores_[i+successor], pat.se+1);
+                int next = Util::binarySearch(scores_[i+successor], pat.se+1);
                 if (next == -1) break;
                 if (!add(i+successor, next)) break;
                 pat.qe = i+successor;
@@ -56,21 +56,6 @@ void Score::buildSeeds() {
             
         }
     }
-}
-
-int Score::binarySearch(const vector<int>&v, int t) {
-    if (v.size() < 1) return -1;
-    int l = 0, r = (int)v.size()-1;
-    while (r >= l) {
-        int m = l+(r-l)/2;
-        if (v[m] == t) return m;
-        if (v[m] < t) {
-            l = m+1;
-        } else {
-            r = m-1;
-        }
-    }
-    return -1;
 }
 
 
@@ -148,6 +133,8 @@ void Score::popAll() {
 // return [query, subject], with '-' indicating gapping
 // if the scoring is low, return an empty vector
 vector<string> Score::expendSequence(const string& seqA, const string& seqB) {
+    if (seqA.size() == 0 || seqB.size() == 0) return vector<string>();
+
     vector<vector<int> > dp(seqA.size()+1, vector<int>(seqB.size()+1, 0));
     for (unsigned i=1; i<seqB.size()+1; i++) {
         dp[0][i] = dp[0][i-1] + gap;
@@ -199,5 +186,25 @@ void Score::reverseString(string& input) {
         input[l] = input[r];
         input[r] = temp;
         l++; r--;
+    }
+}
+
+void Score::expend() {
+    while (!pq.empty()) {
+        Pattern seed = pq.top(); pq.pop();
+
+        unsigned size = seed.size();
+
+        // expend right
+        string queryRight = q_->get(seed.se+1, size);
+        string subjectRight = 0;//
+
+        string queryLeft;
+        if (seed.ss >= size) {
+            queryLeft = q_->get(seed.ss-size, size);
+        } else {
+            queryLeft = q_->get(0, seed.ss);
+        }
+
     }
 }
