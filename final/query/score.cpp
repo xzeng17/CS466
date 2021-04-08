@@ -1,10 +1,10 @@
 #include "score.h"
-#include <iostream>
 
 Score::Score(Query* q, SequenceMapping* sm, Blosum* b):q_(q), sm_(sm), b_(b), sequence_(q->sequence()) {
     scores_ = vector<vector<int> >(q_->size(), vector<int>());
     exactMatch();
     buildSeeds();
+    popAll();
 }
 
 void Score::exactMatch() {
@@ -16,6 +16,8 @@ void Score::exactMatch() {
             for (int pos : positions) {
                 scores_[i].push_back(pos);
             }
+        } else {
+            fuzzyMatch(tripleAA);
         }
     }
 }
@@ -71,6 +73,7 @@ int Score::binarySearch(const vector<int>&v, int t) {
     return -1;
 }
 
+
 void Score::fuzzyMatch(const string& input) {
     if (pq.size() == seedNumber) return;// return if seeds number already satisified
     string varient;
@@ -81,15 +84,13 @@ void Score::fuzzyMatch(const string& input) {
             varient[i] = c;
             if (!sm_->contains(varient)) continue;
             int fuzzyScore = tripleScore(input, varient);
-            if (fuzzyScore < (int)seedCut_) continue;
+            if (fuzzyScore < seedCut) continue;
             const vector<int>& positions = sm_->getPos(varient);
             for (int pos : positions) {
                 scores_[i].push_back(pos);
             }
         }
     }
-
-    buildSeeds();   // called again, can be improved later
 }
 
 int Score::tripleScore(const string& triQAA, const string& triSAA) {
@@ -121,12 +122,82 @@ bool Score::added(int i, int j) {
 void Score::popAll() {
     while (!pq.empty()) {
         Pattern pat = pq.top(); pq.pop();
-        string pattern = sequence_.substr(pat.qs, pat.qe-pat.qs+1);
-        std::cout<<pattern<<std::endl;
+        seeds_.push_back(pat);
+        // string pattern = sequence_.substr(pat.qs, pat.qe-pat.qs+1);
+        // std::cout<<pattern<<std::endl;
         // std::cout<<"query start: "<<pat.qs<<std::endl;
         // std::cout<<"query end: "<<pat.qe<<std::endl;
         // std::cout<<"subject start: "<<pat.ss<<std::endl;
         // std::cout<<"subject end: "<<pat.se<<std::endl;
         // std::cout<<"Matching score: "<<pat.score<<std::endl;
+    }
+}
+
+///////////
+
+/*
+                                    seqB
+                        A  M  I  N  O  A  C  I  D
+                      0-5-10-15-20-25-30-35-40-45
+                   A -5
+                   M-10
+             seqA  I-15
+                   N-20
+                   O-25
+*/
+// return [query, subject], with '-' indicating gapping
+// if the scoring is low, return an empty vector
+vector<string> Score::expendSequence(const string& seqA, const string& seqB) {
+    vector<vector<int> > dp(seqA.size()+1, vector<int>(seqB.size()+1, 0));
+    for (unsigned i=1; i<seqB.size()+1; i++) {
+        dp[0][i] = dp[0][i-1] + gap;
+    }
+    for (unsigned i=1; i<seqA.size()+1; i++) {
+        dp[i][0] = dp[i-1][0] + gap;
+    }
+    int maxScore = 0;
+    int x = 0, y = 0;
+    for (unsigned i=1; i<seqA.size()+1; i++) {
+        for (unsigned j=1; j<seqB.size()+1; j++) {
+            int score = b_->getScore(seqA[i-1], seqB[j-1]);
+            dp[i][j] = max(dp[i-1][j-1] + score, max(dp[i-1][j], dp[i][j-1])+gap);
+            if (dp[i][j] > maxScore) {
+                maxScore = dp[i][j];
+                y = i; x = j;
+            }
+        }
+    }
+    if (maxScore < seedCut) return vector<string>();
+    string seqAResult;
+    string seqBResult;
+    int curScore;
+
+    while (x>0 && y>0) {
+        curScore = dp[y][x];
+        if (x>0 && y>0 && dp[y-1][x-1] == curScore - b_->getScore(seqA[y-1], seqB[x-1])) {
+            seqAResult.push_back(seqA[--y]);
+            seqBResult.push_back(seqB[--x]);
+        } else if (x>0 && dp[y][x-1] == curScore-gap) {
+            seqBResult.push_back(seqB[--x]);
+            seqAResult.push_back('-');
+        } else if (y>0 && dp[y-1][x] == curScore-gap) {
+            seqBResult.push_back('-');
+            seqAResult.push_back(seqA[--y]);
+        }
+    }
+
+    reverseString(seqAResult);reverseString(seqBResult);
+    cout<<seqAResult<<endl;cout<<seqBResult<<endl;
+    return vector<string>{seqAResult,seqBResult};
+}
+
+void Score::reverseString(string& input) {
+    if (input.size() <=1) return;
+    unsigned l=0, r=input.size()-1;
+    while (l<r) {
+        char temp = input[l];
+        input[l] = input[r];
+        input[r] = temp;
+        l++; r--;
     }
 }

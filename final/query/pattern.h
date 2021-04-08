@@ -12,16 +12,7 @@ struct Pattern {
     unsigned se = 0;    // subject index end
     int score = 0;      // Matching score
 
-    Pattern(const string& q, const string& s) {
-        query = q;
-        subject = s;
-    }
-
-    bool operator>(const Pattern& other) const {
-        return score > other.score;
-    }
-
-    bool operator<(const Pattern& other) const {
-        return score < other.score;
-    }
+    Pattern(const string& q, const string& s);
+    bool operator>(const Pattern& other) const;
+    bool operator<(const Pattern& other) const;
 };

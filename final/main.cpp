@@ -26,13 +26,14 @@ int main () {
     string qname = assets+"query.txt";
     Query q (qname);
     vector<SequenceMapping> sms = db.getDB();
-    
+
     //sms[0].printMap();
 
     Score score (&q, &sms[0], &b);
 
-    score.popAll();
-
+    const string seqA = "MSKGEELFTGVVPILVELDGDVHRFSVSGEGEGDATYGKLTLKFICTTG", 
+    seqB = "MSKGEELFTGVVPILVELDGDVNGHKFSVSGEGEGDATYGKLTLKFICTTG";
+    score.expendSequence(seqA, seqB);
     // string name = "assets/gfps.txt";
     // Fileloader fl(name);
     // while (fl.hasNext()) cout<<"Read line: "<<fl.readLine()<<endl;

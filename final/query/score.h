@@ -10,35 +10,41 @@
 #include <queue>
 #include <map>
 #include <set>
-
+#include <algorithm>
+#include <iostream>
 using namespace std;
 
 class Score {
     public:
         Score(Query* q, SequenceMapping* sm, Blosum* b);
-        void popAll();
-        
+        vector<string> expendSequence(const string& seqA, const string& seqB);
+        void reverseString(string& input);
+
     private:
         Query* q_;
         SequenceMapping* sm_;
         Blosum* b_;
+
         const unsigned seedNumber = 3;   //hard coded the limit of seeds
-        const unsigned seedCut_ = 10; // hard coded the cutoff for being a seed, fuzzy match
+        const int seedCut = 10; // hard coded the cutoff for being a seed, fuzzy match
+        const int gap = -10; // hard coded the gap panelty;
+
         const string& sequence_;
         
         priority_queue<Pattern, vector<Pattern>, greater<Pattern> > pq;
         vector<vector<int> > scores_;
         map<int, set<int> > added_;      // {i: {j}}
+        vector<Pattern> seeds_;     // seeds poped from pq;
 
+        void popAll();
         void exactMatch();
         void buildSeeds();  // totally based on the blosum matching score
         int binarySearch(const vector<int>&v, int t);
         void fuzzyMatch(const string& input);
-        int tripleScore(const string& triQAA, const string& triSAA);
+        int tripleScore(const string& triQAA, const string& triSAA);    // Obtain three Amino acids matching score
 
         bool add(int i, int j);
         bool added(int i);
         bool added(int i, int j);
 
-        
 };

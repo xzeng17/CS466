@@ -7,6 +7,15 @@ SequenceMapping::SequenceMapping(const string& title) {
 
 void SequenceMapping::build(const string& sequence) {
     if (sequence.size() < 3) return;
+
+    if (subject_.empty()) {
+        subject_.push_back(sequence);
+        startIdx_.push_back(0);
+    } else {
+        subject_.push_back(sequence.substr(2, sequence.size()));
+        startIdx_.push_back(subject_[subject_.size()-1].size()+startIdx_[startIdx_.size()-1]);
+    }
+
     for (int i=0; i<(int)sequence.size()-2; ++i) {
         string threeAA;
         threeAA = sequence.substr(i, 3);

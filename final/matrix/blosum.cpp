@@ -21,7 +21,7 @@ void Blosum::init() {
     try {
         line = fl.readLine();
     } catch (runtime_error e) {
-        std::cout<<"Failed to load Blosum input."<<std::endl;
+        std::cout<<"Error at Blosum->init: Failed to load Blosum input."<<std::endl;
     }
     
     vector<char> bar;
@@ -54,7 +54,7 @@ int Blosum::getNumber(const string& line, unsigned& idx) {
 }
 
 int Blosum::getScore(const char& aaA, const char& aaB) {
-    if (!validInput(aaA) || !validInput(aaB)) throw runtime_error("Error: Unknown input");
+    if (!validInput(aaA) || !validInput(aaB)) throw runtime_error("Error at Blosum->getScore: Unknown input");
     return matrix_[aaA][aaB];
 }
 

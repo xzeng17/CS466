@@ -12,9 +12,10 @@ class Query {
         unsigned size() const;
         const string& sequence() const;
         const string& title() const;
+        const vector<char> aa = {'A','R','N','D','C','Q','E','G','H','I','L','K','M','F','P','S','T','W','Y','V','B','Z','X'};
+
 
     private:
-        const vector<char> aa = {'A','R','N','D','C','Q','E','G','H','I','L','K','M','F','P','S','T','W','Y','V','B','Z','X'};
         string title_;
         unsigned length_ = 0;
         string sequence_;

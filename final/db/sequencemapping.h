@@ -24,6 +24,7 @@ class SequenceMapping {
         int idx_ = 0;
         string title_;
         map<string, vector<int> > map_;
-
+        vector<string> subject_;    // subject original sequence
+        vector<int> startIdx_;      // subject's start index
         
 };
