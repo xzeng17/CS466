@@ -15,25 +15,26 @@ using namespace std;
 
 // int main (int argc, char** argv) {
 int main () {
-    string assets="assets/";
+    string assetsDir = "assets/";
+    string queryDir = "InputQuery/";
+    string subjectDir = "InputSubjects/";
 
-    Blosum b;
-    // cout<<"Matching score is: "<<b.getScore('J', 'A')<<endl;
+    string qname = queryDir + "query.txt";
+    string sname = subjectDir + "gfps.txt";    // fasta file, subjects
 
-    string sname = assets+"gfps.txt";    // fasta file, subjects
+    Blosum b;   Query q(qname);
     Database db(sname);
+    vector<SequenceMapping>& sms = db.getDB();
 
-    string qname = assets+"query.txt";
-    Query q (qname);
-    vector<SequenceMapping> sms = db.getDB();
+    for (SequenceMapping sm : sms) {
+        Score score(&q, &sm, &b);
+    }
+    // sms[0].printMap();
+    // cout<<"test get function"<<endl;
+    // cout<<sms[0].get(3,30000)<<endl;
 
-    //sms[0].printMap();
+    
 
-    Score score (&q, &sms[0], &b);
-
-    const string seqA = "MSKGEELFTGVVPILVELDGDVHRFSVSGEGEGDATYGKLTLKFICTTG", 
-    seqB = "MSKGEELFTGVVPILVELDGDVNGHKFSVSGEGEGDATYGKLTLKFICTTG";
-    score.expendSequence(seqA, seqB);
     // string name = "assets/gfps.txt";
     // Fileloader fl(name);
     // while (fl.hasNext()) cout<<"Read line: "<<fl.readLine()<<endl;

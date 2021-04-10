@@ -21,6 +21,8 @@ class SequenceMapping {
         void printArr(const vector<int>& arr);
         string get(unsigned start, unsigned size);
 
+        unsigned seqSize();
+
     private:
         int idx_ = 0;
         string title_;

@@ -65,7 +65,7 @@ bool Database::contains(const string& title, const string& aa) {
 
 
 // for testing purpose, exposing data structure through public API
- vector<SequenceMapping> Database::getDB() {
+ vector<SequenceMapping>& Database::getDB() {
      return db_;
  }
 

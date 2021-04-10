@@ -43,3 +43,14 @@ TEST_CASE("smallestLargerEqual", "[valgrind][weight=1]") {
     res = Util::smallestLargerEqual(v, 11); REQUIRE(res == 6);
     res = Util::smallestLargerEqual(v, 13); REQUIRE(res == -1);
 }
+
+TEST_CASE("reverse string", "[valgrind][weight=1]") {
+    vector<string> tests   = {"ABCDEFG", "", "A", "AB", "ABC", "Hello World!"};
+    vector<string> answers = {"GFEDCBA", "", "A", "BA", "CBA", "!dlroW olleH"};
+
+    for (unsigned i=0; i<tests.size(); ++i) {
+        string test = tests[i];
+        Util::reverseString(test);
+        REQUIRE(test == answers[i]);
+    }
+}

@@ -54,6 +54,22 @@ void SequenceMapping::printArr(const vector<int>& arr) {
 }
 
 string SequenceMapping::get(unsigned start, unsigned size) {
+    
     int arrIdx = Util::largestSmallerEqual(startIdx_, start);
-    return "";
+    if (arrIdx < 0 || size == 0) return "";
+    string res;
+
+    while (size && start < seqSize()) {
+        for (unsigned i=start - startIdx_[arrIdx]; i<subject_[arrIdx].size() && size; i++) {
+            res.push_back(subject_[arrIdx][i]);
+            size--;
+            start++;
+        }
+        arrIdx++;
+    }
+    return res;
+}
+
+unsigned SequenceMapping::seqSize() {
+    return startIdx_[startIdx_.size()-1]+subject_[subject_.size()-1].size();
 }

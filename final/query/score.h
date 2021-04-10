@@ -17,9 +17,9 @@ using namespace std;
 
 class Score {
     public:
+        Score(); // for test
         Score(Query* q, SequenceMapping* sm, Blosum* b);
-        vector<string> expendSequence(const string& seqA, const string& seqB);
-        void reverseString(string& input);
+        void expendSequence(const string& seqA, const string& seqB, int& flag, Pattern& pattern);
 
     private:
         Query* q_;
@@ -28,8 +28,8 @@ class Score {
 
         const unsigned seedNumber = 3;   //hard coded the limit of seeds
         const int seedCut = 10; // hard coded the cutoff for being a seed, fuzzy match
-        const int gap = -10; // hard coded the gap panelty;
-
+        const int gap = -15; // hard coded the gap panelty;
+        const int scoreCut = 50; // hard coded the cutoff for alignment
         const string& sequence_;
         
         priority_queue<Pattern, vector<Pattern>, greater<Pattern> > pq;
@@ -37,12 +37,16 @@ class Score {
         map<int, set<int> > added_;      // {i: {j}}
         vector<Pattern> seeds_;     // seeds poped from pq;
 
+        vector<Pattern> processedSeeds_;
+
         void popAll();
         void exactMatch();
         void buildSeeds();  // totally based on the blosum matching score
         void fuzzyMatch(const string& input);
         int tripleScore(const string& triQAA, const string& triSAA);    // Obtain three Amino acids matching score
         void expend();
+        void buildReport();
+        string buildComment(const string& query, const string& subject, Pattern& pattern);
 
         bool add(int i, int j);
         bool added(int i);

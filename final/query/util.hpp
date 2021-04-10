@@ -1,7 +1,9 @@
 #pragma once
 
 #include <vector>
+#include <string>
 using std::vector;
+using std::string;
 
 struct Util {
     int static binarySearch(const vector<int>&v, int t) {
@@ -51,5 +53,15 @@ struct Util {
             }
         }
         return r;
+    }
+
+    void static reverseString(string& input) {
+        if (input.size() <=1) return;
+        unsigned l=0, r=input.size()-1;
+        while (l<r) {
+            char temp = input[l];
+            input[l++] = input[r];
+            input[r--] = temp;
+        }
     }
 };

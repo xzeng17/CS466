@@ -41,5 +41,7 @@ string Query::get(unsigned start, unsigned size) {
     for (unsigned i=start; i<start+size || i<sequence_.size(); i++) {
         res.push_back(sequence_[i]);
     }
+    //std::cout<<"full string: "<<sequence()<<std::endl;
+    //std::cout<<"substring: "<<res<<std::endl;
     return res;
 }

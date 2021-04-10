@@ -6,6 +6,7 @@
 #include <set>
 #include "sequencemapping.h"
 #include "../file_loader/fileloader.h"
+#include "../query/score.h"
 
 using namespace std;
 
@@ -18,7 +19,7 @@ class Database {
         unsigned size() const;
         
         void printMap(const string& title);
-        vector<SequenceMapping> getDB();   // for test purpose
+        vector<SequenceMapping>& getDB();   // for test purpose
     private:
         void init(Fileloader& fl);
         vector<SequenceMapping> db_;
