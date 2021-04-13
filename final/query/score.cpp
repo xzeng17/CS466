@@ -1,6 +1,8 @@
 #include "score.h"
+#include <algorithm>
 #include "util.hpp"
-using std::cout;using std::endl;
+using std::cout; using std::endl;
+using std::min; using std::max;
 Score::Score(Query* q, SequenceMapping* sm, Blosum* b):q_(q), sm_(sm), b_(b), sequence_(q->sequence()) {
     scores_ = vector<vector<int> >(q_->size(), vector<int>());  // for query element, record matched subject triple AA start index
     exactMatch();
@@ -43,21 +45,24 @@ void Score::buildSeeds() {
             pat.ss = scores_[i][j];
             pat.se = scores_[i][j];
             unsigned successor = 1;
-
+            
             while (i+successor < scores_.size()-2) {
                 int next = Util::binarySearch(scores_[i+successor], pat.se+1);  // expend matches by looking for consecutive index
                 if (next == -1) break;
                 if (!add(i+successor, next)) break;
                 pat.qe = i+successor;
-                pat.se = scores_[i+successor][next];
-                pat.score += tripleScore(sequence_.substr(i,3), sequence_.substr(i,3));
+                //pat.se = scores_[i+successor][next];
+                pat.se = pat.ss +pat.qe-pat.qs;
+                pat.score += b_->getScore(q_->get(pat.qe+2,1)[0], sm_->get(pat.se+2,1)[0]); // Add score one char at a time
                 successor++;
             }
 
-            string querySequence = q_->get(pat.qs, q_->size());
-            string subjectSequence = sm_->get(pat.ss, q_->size());
-            string commentSequence = buildComment(querySequence, subjectSequence, pat);
-
+            string querySequence = q_->get(pat.qs, min(pat.se+2-pat.ss+1, pat.qe+2-pat.qs+1));
+            string subjectSequence = sm_->get(pat.ss, min(pat.se+2-pat.ss+1, pat.qe+2-pat.qs+1));
+            // cout<<querySequence<<endl;cout<<subjectSequence<<endl;
+            string commentSequence;
+            buildComment(querySequence, subjectSequence, pat, commentSequence);
+            
             pat.queryRight.push_back(querySequence);
             pat.subjectRight.push_back(subjectSequence);
             pat.commentRight.push_back(commentSequence);
@@ -144,13 +149,7 @@ void Score::popAll() {
 */
 // return [query, subject], with '-' indicating gapping
 // if the scoring is low, return an empty vector
-void Score::expendSequence(const string& seqA, const string& seqB, int& flag, Pattern& pattern) {
-    if (seqA.size() == 0 || seqB.size() == 0) {
-        flag = 0;
-        return;
-    }
-    //cout<<"seqA is: "<<seqA<<endl;cout<<"seqB is: "<<seqB<<endl;    // print
-    vector<vector<int> > dp(seqA.size()+1, vector<int>(seqB.size()+1, 0));
+vector<int> Score::editingDistance(const string& seqA, const string& seqB, vector<vector<int> >& dp) {
     for (unsigned i=1; i<seqB.size()+1; i++) {
         dp[0][i] = dp[0][i-1] + gap;
     }
@@ -158,7 +157,7 @@ void Score::expendSequence(const string& seqA, const string& seqB, int& flag, Pa
         dp[i][0] = dp[i-1][0] + gap;
     }
     int maxScore = 0;
-    unsigned x = 0, y = 0;
+    int x = 0, y = 0;
     for (unsigned i=1; i<seqA.size()+1; i++) {
         for (unsigned j=1; j<seqB.size()+1; j++) {
             //cout<<"from query: "<<seqA[i-1]<<" from subject: "<<seqB[j-1]<<endl;    // print
@@ -170,28 +169,15 @@ void Score::expendSequence(const string& seqA, const string& seqB, int& flag, Pa
             }
         }
     }
-    bool left = flag == 1;
-    if (x != dp[0].size()-1 || y != dp.size()-1) flag = 0;
+    // for (vector<int> arr : dp) {
+    //     Util::printArr(arr);
+    //     std::cout<<std::endl;
+    // }
+    return vector<int> {x, y, maxScore};
+}
 
-    if (maxScore < seedCut) {
-        flag = 0;
-        return;
-    } 
-    pattern.score += maxScore;
-    // update range in pattern
-    if (left) {
-        pattern.qs -= y+1;
-        pattern.ss -= x+1;
-    } else {
-        pattern.qe += y+1;
-        pattern.se += x+1;
-    }
-
-    string seqAResult;
-    string seqBResult;
-    string comment;
+void Score::backTrackPath(vector<vector<int> >& dp, string& seqAResult, string& seqBResult, const string& seqA, const string& seqB, unsigned x, unsigned y) {
     int curScore;
-
     while (x>0 && y>0) {
         curScore = dp[y][x];
         if (x>0 && y>0 && dp[y-1][x-1] == curScore - b_->getScore(seqA[y-1], seqB[x-1])) {
@@ -205,21 +191,56 @@ void Score::expendSequence(const string& seqA, const string& seqB, int& flag, Pa
             seqAResult.push_back(seqA[--y]);
         }
     }
+}
 
-    comment = buildComment(seqAResult, seqBResult, pattern);
 
-    if (!left) {
-        Util::reverseString(seqAResult);Util::reverseString(seqBResult);
-        pattern.queryRight.push_back(seqAResult);
-        pattern.queryRight.push_back(seqBResult);
-        pattern.commentRight.push_back(comment);
+void Score::expendSequence(const string& seqA, const string& seqB, int& flag, Pattern& pattern) {
+    if (seqA.size() == 0 || seqB.size() == 0) {
+        flag = 0;
+        return;
+    }
+    // cout<<"seqA is: "<<seqA<<endl;cout<<"seqB is: "<<seqB<<endl;    // print
+    vector<vector<int> > dp(seqA.size()+1, vector<int>(seqB.size()+1, 0));
+    vector<int> res = editingDistance(seqA, seqB, dp);
+
+    unsigned x = res[0], y = res[1];
+    int maxScore = res[2];
+
+    if (x != dp[0].size()-1 || y != dp.size()-1) flag = 0;  // if not all the sequence aligned, no need to expend further
+    
+    if (maxScore < seedCut/2) { // relaxed by half
+        flag = 0;
+        return;
+    } 
+    pattern.score += maxScore;     
+    // update range in pattern
+    if (flag == 1) {
+        pattern.qs -= y+1;
+        pattern.ss -= x+1;
     } else {
+        pattern.qe += y+1;
+        pattern.se += x+1;
+    }
+    
+    string seqAResult;
+    string seqBResult;
+    backTrackPath(dp, seqAResult, seqBResult, seqA, seqB, x, y);
+
+    string comment;
+    buildComment(seqAResult, seqBResult, pattern, comment);
+
+    if (flag != 1) {
+        Util::reverseString(seqAResult);Util::reverseString(seqBResult);
         pattern.queryLeft.push_back(seqAResult);
         pattern.queryLeft.push_back(seqBResult);
         pattern.commentLeft.push_back(comment);
+    } else {
+        pattern.queryRight.push_back(seqAResult);
+        pattern.queryRight.push_back(seqBResult);
+        pattern.commentRight.push_back(comment);
     }
-    
-    std::cout<<seqAResult<<endl;std::cout<<seqBResult<<endl;
+
+    // std::cout<<"Line at: "<<__LINE__<<seqAResult<<endl;std::cout<<seqBResult<<endl;
     return;
 }
 
@@ -228,16 +249,19 @@ void Score::expend() {
     
     while (!seeds_.empty()) {
         Pattern seed = seeds_[seeds_.size()-1]; seeds_.pop_back();
-        int right = 2;
-        int left = 1;
+        int right = 2;  // right = 2
+        int left = 1;   // left = 1
 
-        while (right | left) {
-            unsigned size = seed.size();
-            if (right) {
+        while (right == 2 || left == 1) {
+            unsigned presize = max((unsigned) 50, seed.size());
+
+            if (right == 2) {
+
+                unsigned size = min(sm_->size()-seed.se-3, min(presize, q_->size()-seed.qe-3));
                 string queryRight = q_->get(seed.qe+1+2, size);
                 string subjectRight = sm_->get(seed.se+1+2, size);
-                //cout<<"QueryRight: "<<queryRight<<endl;             //print
-                //cout<<"subjectRight: "<<subjectRight<<endl;         //print
+                // cout<<"QueryRight: "<<queryRight<<endl;             //print
+                // cout<<"subjectRight: "<<subjectRight<<endl;         //print
                 if (queryRight.empty() || subjectRight.empty()) {
                     right = 0;
                 } else {
@@ -245,26 +269,22 @@ void Score::expend() {
                 }
             }
 
-            if (left) {
+            if (left == 1) {
+
+                unsigned size = min(presize, min(seed.ss, seed.qs));
                 string queryLeft;
                 string subjectLeft;
-                if (seed.ss >= size) {
-                    subjectLeft = sm_->get(seed.ss-size, size);
-                } else {
-                    subjectLeft = sm_->get(0, seed.ss);
-                }
-                if (seed.qs >= size) {
-                    queryLeft = q_->get(seed.qs-size, size);
-                } else {
-                    queryLeft = q_->get(0, seed.qs);
-                }
-                //cout<<"queryLeft: "<<queryLeft<<endl;           //print
-                //cout<<"subjectLeft: "<<subjectLeft<<endl;       //print
+
+                subjectLeft = sm_->get(seed.ss-size, size);
+                queryLeft = q_->get(seed.qs-size, size);
+  
+                // cout<<"queryLeft: "<<queryLeft<<endl;           //print
+                // cout<<"subjectLeft: "<<subjectLeft<<endl;       //print
                 if (queryLeft.empty() || subjectLeft.empty()) {
                     left = 0;
                 } else {
-                    Util::reverseString(queryLeft);
-                    Util::reverseString(subjectLeft);
+                    //Util::reverseString(queryLeft);
+                    //Util::reverseString(subjectLeft);
                     expendSequence(queryLeft, subjectLeft, left, seed);
                 }
             }
@@ -275,12 +295,12 @@ void Score::expend() {
     }
 }
 
-string Score::buildComment(const string& query, const string& subject, Pattern& pattern) {
-    string comment;
-        for (unsigned i=0; i<query.size(); ++i) {
+void Score::buildComment(const string& query, const string& subject, Pattern& pattern, string& comment) {
+    if (query.size() != subject.size()) throw runtime_error("buildComment Error at score.cpp, query subject size different");
+    for (unsigned i=0; i<query.size(); ++i) {
         if (query[i] == subject[i]) {
             comment.push_back(subject[i]);
-            pattern.identities += 1;pattern.positives += 1;
+            pattern.identities += 1; pattern.positives += 1;
         } else if (query[i] == '-' || subject[i] == '-') {
             comment.push_back('-');
             pattern.gaps += 1;
@@ -289,7 +309,6 @@ string Score::buildComment(const string& query, const string& subject, Pattern& 
             pattern.positives += 1;
         }
     }
-    return comment;
 }
 
 void Score::buildReport() {

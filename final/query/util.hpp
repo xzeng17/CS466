@@ -2,8 +2,11 @@
 
 #include <vector>
 #include <string>
+#include <iostream>
 using std::vector;
 using std::string;
+using std::cout;
+using std::endl;
 
 struct Util {
     int static binarySearch(const vector<int>&v, int t) {
@@ -62,6 +65,19 @@ struct Util {
             char temp = input[l];
             input[l++] = input[r];
             input[r--] = temp;
+        }
+    }
+
+    
+    void static printArr(const vector<int>& arr) {
+        for (unsigned i=0; i<arr.size(); i++) {
+            cout<<arr[i]<<", ";
+        }
+    }
+
+    void static printArr(const vector<string>& arr) {
+        for (unsigned i=0; i<arr.size(); i++) {
+            cout<<arr[i]<<", ";
         }
     }
 };

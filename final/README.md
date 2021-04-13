@@ -11,9 +11,22 @@ After generating seeds, expend alignment sequences from left and right side of s
 
 Alignment of matching domain is printed in the console.
 
+# Unaddressed issues
+
+Even though I implemented the sequence expending through editing distance, the result is not desired because the output for mismatch/gapped tests are too short and the gapping and mismatch did not worked as expected.
+
 # User guide
+
+Put the query sequence in fasta format in InputQuery folder.
+Put the subject sequences in fasta format in InputSubjects folder.
 
 To compile program    $ make
 To compile test suite $ make test
-To excute program     $ ./main
+To excute program     $ ./main <query file name> <subject file name>
 To excute test cases  $ ./test
+
+# Example:
+
+    $ ./main
+    $ ./main query.txt gfps.txt
+

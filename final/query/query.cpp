@@ -38,7 +38,8 @@ string Query::get(unsigned start, unsigned size) {
     if (start >= sequence_.size()) {
         return res;
     }
-    for (unsigned i=start; i<start+size || i<sequence_.size(); i++) {
+    unsigned totalSize = start+size;
+    for (unsigned i=start; i<totalSize && i<sequence_.size(); i++) {
         res.push_back(sequence_[i]);
     }
     //std::cout<<"full string: "<<sequence()<<std::endl;

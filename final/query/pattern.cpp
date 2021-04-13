@@ -25,25 +25,33 @@ unsigned Pattern::size() const {
 }
 
 void Pattern::report() {
-    cout<<"*********************begin***********************"<<endl;
-    cout<<"Query: "<<query<<"  Subject: "<<subject<<endl;
+    if (queryLeft.size() != commentLeft.size() && commentLeft.size() != subjectLeft.size()){ 
+        // cout<<"!!! Bad format !!!"<<endl;
+        return; // include a simple check;
+    }
+    cout<<"<--------------------------Report---------------------------->"<<endl;
+    cout<<"Query:   "<<query<<endl;
+    cout<<"Subject: "<<subject<<endl;
 
-    double ident = (double)identities / (double)size();
-    double posit = (double)positives / (double)size();
-    double gap = (double)gaps/(double)size();
-    cout<<"Identities: "<<ident<<" Positives: "<<posit<<" Gaps: "<<gap<<" Scores: "<<score<<endl;
+    double ident =  (double)identities  /   (double)size();
+    double posit =  (double)positives   /   (double)size();
+    double gap =    (double)gaps        /   (double)size();
+    cout<<"      Identities: "<<ident<<"      Positives: "<<posit<<"      Gaps: "<<gap<<"      Scores: "<<score<<endl;
 
     string queryRes;
     string commentRes;
     string subjectRes;
 
-    for (unsigned i=queryLeft.size()-1; i<queryLeft.size(); i--) {
+    for (int i = (int) queryLeft.size()-1; i>=0; i--) {
         queryRes+=queryLeft[i];
         commentRes+=commentLeft[i];
         subjectRes+=subjectLeft[i];
     }
-
+    // cout<<"queryRes"<<queryRes<<endl;        // debug
+    // cout<<"commentRes"<<commentRes<<endl;    // debug
+    // cout<<"subjectRes"<<subjectRes<<endl;    // debug
     for (unsigned i=0; i<queryRight.size(); i++) {
+        //cout<<queryRight.size()<<commentRight.size()<<subjectRight.size()<<endl;  // debug
         queryRes+=queryRight[i];
         commentRes+=commentRight[i];
         subjectRes+=subjectRight[i];
@@ -51,5 +59,5 @@ void Pattern::report() {
     cout<<queryRes<<"  Query: "<<qs<<"-"<<qe+2<<endl;   
     cout<<commentRes<<endl;
     cout<<subjectRes<<"  Subject: "<<ss<<"-"<<se+2<<endl;
-    cout<<"*********************end***********************"<<endl;
+    cout<<"<----------------------------End------------------------------>"<<endl;
 }

@@ -29,20 +29,15 @@ void Database::init(Fileloader& fl) {
         SequenceMapping sm(line);
         titles_[line] = (int) db_.size();
         line = fl.readLine();
-        string last = "";
-        string sndlast = "";
         
         while (line.size() > 0 && line[0] != '>') {
-            string concatedLine = sndlast+last+line;
-            //cout<<"showing line: "<<concatedLine<<endl;
-            sm.build(concatedLine);
+            sm.addSequence(line);
             if (!fl.hasNext()) break;
-            last = concatedLine.substr(concatedLine.size()-1,1);
-            sndlast = concatedLine.substr(concatedLine.size()-2,1);
+
             line.clear();
             while (line.size() == 0 && fl.hasNext()) line = fl.readLine();
         }
-
+        sm.build();
         db_.push_back(sm);
         // cout<<"Finish processing sequence: "<<sm.title()<<endl;
     }

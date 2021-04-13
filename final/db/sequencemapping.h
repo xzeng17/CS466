@@ -13,21 +13,23 @@ using namespace std;
 class SequenceMapping {
     public:
         SequenceMapping(const string& title);
-        void build(const string& sequence);
+        void build();
+
         bool contains(const string& key) const;
         const vector<int>& getPos(const string& triAA);
         const string& title() const;
         void printMap();
-        void printArr(const vector<int>& arr);
         string get(unsigned start, unsigned size);
 
-        unsigned seqSize();
+        unsigned size() const;
 
-    private:
+    //private:
+        void addSequence(const string& seq);
+
+
         int idx_ = 0;
         string title_;
         map<string, vector<int> > map_;
-        vector<string> subject_;    // subject original sequence
-        vector<int> startIdx_;      // subject's start index
+        string sequence_;    // subject original sequence
         
 };
