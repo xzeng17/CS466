@@ -18,12 +18,12 @@ Even though I implemented the sequence expending through editing distance, the r
 # User guide
 
 Put the query sequence in fasta format in InputQuery folder.
-Put the subject sequences in fasta format in InputSubjects folder. </bar>
+Put the subject sequences in fasta format in InputSubjects folder. <br>
 
-To compile program    $ make                                              <bar>
-To compile test suite $ make test                                         <bar>  
-To excute program     $ ./main <query file name> <subject file name>      <bar>
-To excute test cases  $ ./test                                            <bar>
+To compile program    $ make                                              <br>
+To compile test suite $ make test                                         <br>  
+To excute program     $ ./main <query file name> <subject file name>      <br>
+To excute test cases  $ ./test                                            <br>
 
 # Example:
 
