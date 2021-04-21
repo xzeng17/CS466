@@ -1,4 +1,4 @@
-EXE = main
+EXE = blast
 TEST = test
 
 EXE_OBJ = main.o 
