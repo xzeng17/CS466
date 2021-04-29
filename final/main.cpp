@@ -52,7 +52,7 @@ int main (int argc, char** argv) {
     string queryDir = "InputQuery/";
     string subjectDir = "InputSubjects/";
 
-    string qname = queryDir + "query.txt";
+    string qname = queryDir + "queries.txt";
     string sname = subjectDir + "gfps.txt";    // fasta file, subjects
 
     if (argc>=3) {

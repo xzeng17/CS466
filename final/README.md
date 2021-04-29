@@ -31,5 +31,5 @@ To excute test cases  $ ./test                                            <br>
 # Example
 
     $ ./blast
-    $ ./blast query.txt gfps.txt
+    $ ./blast queries.txt gfps.txt
 
