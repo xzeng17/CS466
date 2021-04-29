@@ -11,6 +11,7 @@
 #include "query/query.h"
 #include "query/score.h"
 #include "query/util.hpp"
+#include "query/queries.h"
 
 using namespace std;
 // test
@@ -54,37 +55,19 @@ int main (int argc, char** argv) {
     string qname = queryDir + "query.txt";
     string sname = subjectDir + "gfps.txt";    // fasta file, subjects
 
-    if (argc>3) {
-        qname = argv[1];
-        sname = argv[2];
+    if (argc>=3) {
+        qname = queryDir + argv[1];
+        sname = subjectDir + argv[2];
     }
 
-    Blosum b;   Query q(qname);
+    Blosum b;   
+    Queries queries(qname);
     Database db(sname);
-    vector<SequenceMapping>& sms = db.getDB();
 
-
-    // Score score(&q, &sms[0], &b);
-
-    // string testSeqA = "VPILVELDGDVNGHKFSVGEGEGDATYGKLTLKFICTTGKLPVPWPTL";
-    // string testSeqB = "MSKGEELFTGVVPILVELDGDVNGHKFSVSGEGEGDATYGKLTLKFICTTGKLPVPWPTLVTTLTYGVQCFSRYPDHMKRHDFFKSAMPEGYVQERTISFKDDGNYKTRAEVKFEGDTLVNRIELKGIDFKEDGNILGHKLEYNYNSHNVYITADKQKNGIKANFKTRHNIEDGGVQLADHYQQNTPIGDGPVLLPDNHYLSTQSALSKDPNEKRDHMVLLEFVTAAGITHGMDELYK";
-
-    // vector<vector<int> > dp(testSeqA.size()+1, vector<int>(testSeqB.size()+1, 0));
-    // score.editingDistance(testSeqA, testSeqB, dp);
-    // backTrackPath(dp, testSeqA, testSeqB, testSeqB.size()-1, testSeqA.size()-1);
-
-    for (SequenceMapping sm : sms) {
-        Score score(&q, &sm, &b);
+    for (Query query : queries.getQueries()) {
+        for (SequenceMapping sm : db.getDB()) {
+            Score score(&query, &sm, &b);
+        }
     }
-
-    // sms[0].printMap();
-    // cout<<"test get function"<<endl;
-    // cout<<sms[0].get(3,30000)<<endl;
-
-    
-
-    // string name = "assets/gfps.txt";
-    // Fileloader fl(name);
-    // while (fl.hasNext()) cout<<"Read line: "<<fl.readLine()<<endl;
     return 0;
 }

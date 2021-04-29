@@ -37,4 +37,5 @@ struct Pattern {
 
     void report();
     unsigned size() const;
+    unsigned allStringSize() const;
 };

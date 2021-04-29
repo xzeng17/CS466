@@ -14,7 +14,7 @@ CXX = clang++
 LD = clang++
 OBJS_DIR = .objs
 
-OBJS += file_loader/fileloader.o matrix/blosum.o db/db.o db/sequencemapping.o query/pattern.o query/query.o query/score.o
+OBJS += file_loader/fileloader.o matrix/blosum.o db/db.o db/sequencemapping.o query/pattern.o query/query.o query/score.o query/queries.o
 
 # Add standard CS 225 object files
 # OBJS += cs225/HSLAPixel.o cs225/PNG.o cs225/lodepng/lodepng.o
@@ -32,7 +32,7 @@ WARNINGS = -pedantic -Wall -Werror -Wfatal-errors -Wextra -Wno-unused-parameter 
 CXXFLAGS += $(CS225) -std=c++1y -stdlib=libc++ -O0 $(WARNINGS) $(DEPFILE_FLAGS) -g -c
 
 # Flags for linking:
-LDFLAGS += $(CS225) -std=c++1y -stdlib=libc++
+LDFLAGS += $(CS225) -std=c++1y -stdlib=libc++ -lc++abi
 
 # Rule for `all` (first/default rule):
 all: $(EXE)

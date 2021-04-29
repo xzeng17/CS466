@@ -20,12 +20,10 @@ class SequenceMapping {
         const string& title() const;
         void printMap();
         string get(unsigned start, unsigned size);
-
         unsigned size() const;
 
     //private:
         void addSequence(const string& seq);
-
 
         int idx_ = 0;
         string title_;

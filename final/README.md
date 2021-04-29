@@ -13,12 +13,12 @@ Alignment of matching domain is printed in the console.
 
 # Unaddressed issues
 
-Even though I implemented the sequence expending through editing distance, the result is not desired because the output for mismatch/gapped tests are too short and the gapping and mismatch did not worked as expected.
+Even though I implemented the sequence expending through editing distance, the result is not desired. The output for mismatch/gapped tests are too short and the gapping and mismatch did not worked as expected.
 
 # User guide
 
-Put the query sequence in fasta format in InputQuery folder.
-Put the subject sequences in fasta format in InputSubjects folder.        <br>
+Place the query sequences in fasta format in InputQuery folder.           <br>
+Place the subject sequences in fasta format in InputSubjects folder.      <br>
 
 To compile program    $ make blast                                        <br>
 To compile test suite $ make test                                         <br>

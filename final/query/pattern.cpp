@@ -24,12 +24,17 @@ unsigned Pattern::size() const {
     return qe-qs+3;
 }
 
+unsigned Pattern::allStringSize() const {
+    return commentLeft.size() + queryLeft.size() + subjectLeft.size() + commentRight.size() + queryRight.size() + subjectRight.size(); 
+}
+
 void Pattern::report() {
-    if (queryLeft.size() != commentLeft.size() && commentLeft.size() != subjectLeft.size()){ 
+    if ((queryLeft.size() != commentLeft.size() && commentLeft.size() != subjectLeft.size()) 
+        || allStringSize() == 0) { 
         // cout<<"!!! Bad format !!!"<<endl;
         return; // include a simple check;
     }
-    cout<<"<--------------------------Report---------------------------->"<<endl;
+    printf("\033[36m<--------------------------Report---------------------------->\033[0m\n");
     cout<<"Query:   "<<query<<endl;
     cout<<"Subject: "<<subject<<endl;
 
@@ -47,17 +52,21 @@ void Pattern::report() {
         commentRes+=commentLeft[i];
         subjectRes+=subjectLeft[i];
     }
-    // cout<<"queryRes"<<queryRes<<endl;        // debug
-    // cout<<"commentRes"<<commentRes<<endl;    // debug
-    // cout<<"subjectRes"<<subjectRes<<endl;    // debug
+    //cout<<"queryRes: "<<queryRes<<" at line: "<<__LINE__<<endl;        // debug
+    //cout<<"commentRes: "<<commentRes<<" at line: "<<__LINE__<<endl;    // debug
+    //cout<<"subjectRes: "<<subjectRes<<" at line: "<<__LINE__<<endl;    // debug
     for (unsigned i=0; i<queryRight.size(); i++) {
         //cout<<queryRight.size()<<commentRight.size()<<subjectRight.size()<<endl;  // debug
         queryRes+=queryRight[i];
         commentRes+=commentRight[i];
         subjectRes+=subjectRight[i];
     }
-    cout<<queryRes<<"  Query: "<<qs<<"-"<<qe+2<<endl;   
+    //cout<<"queryRes: "<<queryRes<<" at line: "<<__LINE__<<endl;        // debug
+    //cout<<"commentRes: "<<commentRes<<" at line: "<<__LINE__<<endl;    // debug
+    //cout<<"subjectRes: "<<subjectRes<<" at line: "<<__LINE__<<endl;    // debug
+    cout<<queryRes<<"  Query: "<<qs+1<<"-"<<qe+2+1<<endl;   
     cout<<commentRes<<endl;
-    cout<<subjectRes<<"  Subject: "<<ss<<"-"<<se+2<<endl;
-    cout<<"<----------------------------End------------------------------>"<<endl;
+    cout<<subjectRes<<"  Subject: "<<ss+1<<"-"<<se+2+1<<endl;   // report 1 indexed based
+    printf("\033[32m<--------------------------End---------------------------->\033[0m\n");
+    cout<<endl;
 }

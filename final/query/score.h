@@ -26,16 +26,16 @@ class Score {
         SequenceMapping* sm_;
         Blosum* b_;
 
-        const unsigned seedNumber = 3;   //hard coded the limit of seeds
-        const int seedCut = 10; // hard coded the cutoff for being a seed, fuzzy match
-        const int gap = -2; // hard coded the gap panelty;
-        const int scoreCut = 15; // hard coded the cutoff for alignment
+        const unsigned seedNumber = 3;      // hard coded the limit of seeds
+        const int seedCut = 10;             // hard coded the cutoff for being a seed, fuzzy match
+        const int gap = -2;                 // hard coded the gap panelty;
+        const int scoreCut = 15;            // hard coded the cutoff for alignment
         const string& sequence_;
         
         priority_queue<Pattern, vector<Pattern>, greater<Pattern> > pq;
         vector<vector<int> > scores_;       // scores_[i][j] : i = Query i start idx, Subject j matched start idx
-        map<int, set<int> > added_;      // {i: {j}}
-        vector<Pattern> seeds_;     // seeds poped from pq;
+        map<int, set<int> > added_;         // {i: {j}}
+        vector<Pattern> seeds_;             // seeds poped from pq;
 
         vector<Pattern> processedSeeds_;
 

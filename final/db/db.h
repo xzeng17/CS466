@@ -19,7 +19,7 @@ class Database {
         unsigned size() const;
         
         void printMap(const string& title);
-        vector<SequenceMapping>& getDB();   // for test purpose
+        const vector<SequenceMapping>& getDB() const;   // for test purpose
     private:
         void init(Fileloader& fl);
         vector<SequenceMapping> db_;

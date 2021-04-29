@@ -11,12 +11,11 @@ Database::Database(const string& filename) {
     } catch (runtime_error e) {
         cout<<e.what()<<endl;
     }
-
     cout<<"Parsed from "<<filename<<". Database has: "<<size()<<" entries!"<<endl;
 }
 
 void Database::init(Fileloader& fl) {
-    cout<<"Fetching fasta file..."<<endl;
+    cout<<"Fetching Subjects..."<<endl;
     string line;
     line = fl.readLine();
 
@@ -60,7 +59,7 @@ bool Database::contains(const string& title, const string& aa) {
 
 
 // for testing purpose, exposing data structure through public API
- vector<SequenceMapping>& Database::getDB() {
+ const vector<SequenceMapping>& Database::getDB() const {
      return db_;
  }
 

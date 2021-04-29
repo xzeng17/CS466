@@ -3,21 +3,25 @@
 
 #include <iostream>
 
-Query::Query(const string& filename) {
-    Fileloader fl(filename);
-    try {
-        title_ = fl.readLine();
-    } catch (runtime_error e) {
-        std::cout<<"Error: Cannot load query file"<<std::endl;
-    }
-    if (title_[0] != '>') throw runtime_error("Error: Unaccetable fasta format.");
+// Query::Query(const string& filename) {
+//     Fileloader fl(filename);
+//     try {
+//         title_ = fl.readLine();
+//     } catch (runtime_error e) {
+//         std::cout<<"Error: Cannot load query file"<<std::endl;
+//     }
+//     if (title_[0] != '>') throw runtime_error("Error: Unaccetable fasta format.");
     
-    while (fl.hasNext()) {
-        sequence_ += fl.readLine();
-    }
-    length_ = sequence_.size();
+//     while (fl.hasNext()) {
+//         sequence_ += fl.readLine();
+//     }
+//     length_ = sequence_.size();
 
-    if (length_ < 10) throw runtime_error("Error: Query is too short, please input at least 10 residues.");
+//     if (length_ < 10) throw runtime_error("Error: Query is too short, please input at least 10 residues.");
+// }
+
+Query::Query(const string& title) {
+    title_ = title;
 }
 
 unsigned Query::size() const {
@@ -32,7 +36,6 @@ const string& Query::title() const {
     return title_;
 }
 
-
 string Query::get(unsigned start, unsigned size) {
     string res;
     if (start >= sequence_.size()) {
@@ -45,4 +48,10 @@ string Query::get(unsigned start, unsigned size) {
     //std::cout<<"full string: "<<sequence()<<std::endl;
     //std::cout<<"substring: "<<res<<std::endl;
     return res;
+}
+
+// For building Query
+void Query::append(const string& seq) {
+    length_ += seq.size();
+    sequence_ += seq;
 }

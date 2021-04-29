@@ -234,7 +234,7 @@ void Score::expendSequence(const string& seqA, const string& seqB, int& flag, Pa
         pattern.queryLeft.push_back(seqAResult);
         pattern.queryLeft.push_back(seqBResult);
         pattern.commentLeft.push_back(comment);
-    } else {
+    } else if (flag == 2) {
         pattern.queryRight.push_back(seqAResult);
         pattern.queryRight.push_back(seqBResult);
         pattern.commentRight.push_back(comment);
@@ -253,7 +253,7 @@ void Score::expend() {
         int left = 1;   // left = 1
 
         while (right == 2 || left == 1) {
-            unsigned presize = max((unsigned) 50, seed.size());
+            unsigned presize = seed.size();
 
             if (right == 2) {
 
