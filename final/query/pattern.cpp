@@ -30,7 +30,7 @@ unsigned Pattern::allStringSize() const {
 
 void Pattern::report() {
     if ((queryLeft.size() != commentLeft.size() && commentLeft.size() != subjectLeft.size()) 
-        || allStringSize() == 0 || size() != allStringSize()) { 
+        || allStringSize() == 0 ) { 
         // cout<<"!!! Bad format !!!"<<endl;
         return; // include a simple check;
     }
