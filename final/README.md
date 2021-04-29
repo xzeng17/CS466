@@ -17,6 +17,9 @@ Even though I implemented the sequence expending through editing distance, the r
 
 # User guide
 
+Make sure you have Clang and libc++ and the libc++abi
+$ sudo apt-get update; sudo apt-get install clang-6.0 libc++abi-dev libc++-dev
+
 Place the query sequences in fasta format in InputQuery folder.           <br>
 Place the subject sequences in fasta format in InputSubjects folder.      <br>
 
